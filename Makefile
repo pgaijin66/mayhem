@@ -1,8 +1,8 @@
-# Makefile for ChaosKit
+# Makefile for mayhem
 .PHONY: build run clean test podman
 
 # Build variables
-BINARY_NAME=chaoskit
+BINARY_NAME=mayhem
 MAIN_PACKAGE=./main.go
 
 # ==================================================================================== #
@@ -30,7 +30,7 @@ vulncheck:
 
 # Build the binary
 build:
-	@echo "🔨 Building ChaosKit..."
+	@echo "🔨 Building mayhem..."
 	go build -o $(BINARY_NAME) $(MAIN_PACKAGE)
 	@echo "✅ Build complete: $(BINARY_NAME)"
 
@@ -45,7 +45,7 @@ build-all:
 
 # Run with example configuration
 run-example:
-	@echo "🚀 Starting ChaosKit with example configuration..."
+	@echo "🚀 Starting mayhem with example configuration..."
 	./$(BINARY_NAME) -target=http://httpbin.org -port=8080 -delay-prob=0.3 -error-prob=0.1
 
 # Run tests
@@ -81,8 +81,8 @@ config-example:
 # podman build
 podman:
 	@echo "🐳 Building podman image..."
-	podman build -t chaoskit:latest .
-	@echo "✅ podman image built: chaoskit:latest"
+	podman build -t mayhem:latest .
+	@echo "✅ podman image built: mayhem:latest"
 
 # Install dependencies
 deps:
@@ -92,12 +92,12 @@ deps:
 
 # Run with podman
 podman-run:
-	@echo "🐳 Running ChaosKit in podman..."
-	podman run -p 8080:8080 chaoskit:latest -target=http://httpbin.org
+	@echo "🐳 Running mayhem in podman..."
+	podman run -p 8080:8080 mayhem:latest -target=http://httpbin.org
 
 # Help
 help:
-	@echo "ChaosKit - API Chaos Engineering Tool"
+	@echo "mayhem - API Chaos Engineering Tool"
 	@echo ""
 	@echo "Available targets:"
 	@echo "  build        - Build the binary"

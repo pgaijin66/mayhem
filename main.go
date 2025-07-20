@@ -311,7 +311,7 @@ func main() {
 
 	// Print startup information
 	fmt.Printf(`
-🔥 ChaosKit - API Chaos Engineering Tool
+🔥 mayhem - API Chaos Engineering Tool
 =======================================
 📡 Proxy listening on: http://localhost:%s
 🎯 Target service: %s

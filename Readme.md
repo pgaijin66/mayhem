@@ -1,6 +1,6 @@
-# ChaosKit - API Chaos Engineering Tool
+# Mayhem - API Chaos Engineering Tool
 
-ChaosKit is a powerful chaos engineering tool for APIs that allows you to inject controlled failures, delays, and timeouts into your HTTP services to test their resilience.
+Mayhem is a powerful chaos engineering tool for APIs that allows you to inject controlled failures, delays, and timeouts into your HTTP services to test their resilience.
 
 ## Features
 
@@ -25,10 +25,10 @@ make build
 
 ```bash
 # Start chaos proxy pointing to your api 
-./chaoskit -target=<YOUR_API_ENDPOINT> -port=8080
+./mayhem -target=<YOUR_API_ENDPOINT> -port=8080
 
 # With custom chaos parameters
-./chaoskit -target=<YOUR_API_ENDPOINT> -delay-prob=0.3 -error-prob=0.1 -port=8080
+./mayhem -target=<YOUR_API_ENDPOINT> -delay-prob=0.3 -error-prob=0.1 -port=8080
 ```
 
 ### Test the Chaos
@@ -73,7 +73,7 @@ make config-example
 Then run with:
 
 ```bash
-./chaoskit -target=<YOUR_API_ENDPOINT> -config=chaos-config.json
+./mayhem -target=<YOUR_API_ENDPOINT> -config=chaos-config.json
 ```
 
 ## Management Endpoints
@@ -90,7 +90,7 @@ Then run with:
 make docker
 
 # Run with Docker
-docker run -p 8080:8080 chaoskit:latest -target=<YOUR_API_ENDPOINT>
+docker run -p 8080:8080 mayhem:latest -target=<YOUR_API_ENDPOINT>
 ```
 
 ## Use Cases
@@ -108,7 +108,7 @@ docker run -p 8080:8080 chaoskit:latest -target=<YOUR_API_ENDPOINT>
 ```bash
 # Start your microservice
 # Start chaos proxy
-./chaoskit -target=<YOUR_API_ENDPOINT> -port=8080 -delay-prob=0.2 -error-prob=0.1
+./mayhem -target=<YOUR_API_ENDPOINT> -port=8080 -delay-prob=0.2 -error-prob=0.1
 
 # Your tests now go through localhost:8080 instead of localhost:3000
 ```
@@ -117,7 +117,7 @@ docker run -p 8080:8080 chaoskit:latest -target=<YOUR_API_ENDPOINT>
 
 ```bash
 # In your test script
-./chaoskit -target=$SERVICE_URL -port=8080 -config=test-chaos.json &
+./mayhem -target=$SERVICE_URL -port=8080 -config=test-chaos.json &
 CHAOS_PID=$!
 
 # Run your tests against localhost:8080
@@ -131,7 +131,7 @@ kill $CHAOS_PID
 
 ```bash
 git clone <your-repo>
-cd chaoskit
+cd mayhem
 make deps
 make build
 ```

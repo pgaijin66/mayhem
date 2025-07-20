@@ -1,4 +1,4 @@
-module chaoskit
+module mayhem
 
 go 1.24.1
 
