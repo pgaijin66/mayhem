@@ -18,8 +18,8 @@ case $OS in
 esac
 
 # Download and install
-BINARY="mayhem-${PLATFORM}-${ARCH}"
-URL="https://github.com/yourusername/mayhem/releases/latest/download/${BINARY}.tar.gz"
+BINARY="mayhem-v1.0.0-${PLATFORM}-${ARCH}"
+URL="https://github.com/pgaijin66/mayhem/releases/download/v1.0.0/${BINARY}.tar.gz"
 
 echo "🔥 Installing Mayhem for ${PLATFORM}/${ARCH}..."
 echo "📥 Downloading from: $URL"
