@@ -285,7 +285,7 @@ func main() {
 		}
 	}
 
-	rand.Seed(time.Now().UnixNano())
+	rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	chaosMiddleware := NewChaosMiddleware(config, targetURL)
 
