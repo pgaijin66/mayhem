@@ -10,9 +10,11 @@ MAIN_PACKAGE := ./main.go
 VERSION := $(shell git describe --tags --always --dirty)
 COMMIT := $(shell git rev-parse --short HEAD)
 BUILD_DATE := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
+TAG := $(shell git describe --tags --exact-match 2>/dev/null || echo "unknown")
 LDFLAGS := -ldflags "-X main.Version=$(VERSION) \
                      -X main.GitCommit=$(COMMIT) \
-                     -X main.BuildDate=$(BUILD_DATE)"
+                     -X main.BuildDate=$(BUILD_DATE) \
+                     -X main.Tag=$(TAG)"
 
 # ==================================================================================== #
 # QUALITY CONTROL

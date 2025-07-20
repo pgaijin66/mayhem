@@ -9,7 +9,7 @@ var (
 	Version   = "dev"
 	GitCommit = "unknown"
 	BuildDate = "unknown"
-	tag       = "unknown"
+	Tag       = "unknown"
 	GoVersion = runtime.Version()
 )
 
@@ -19,7 +19,7 @@ func showVersion() {
 Git Commit: %s
 Build Date: %s
 Go Version: %s
-Tag : %s
+Tag:        %s
 Platform:   %s/%s
-`, Version, GitCommit, BuildDate, GoVersion, runtime.GOOS, tag, runtime.GOARCH)
+`, Version, GitCommit, BuildDate, GoVersion, Tag, runtime.GOOS, runtime.GOARCH)
 }
