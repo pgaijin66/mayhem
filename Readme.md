@@ -2,6 +2,18 @@
 
 Mayhem is a powerful chaos engineering tool for APIs that allows you to inject controlled failures, delays, and timeouts into your HTTP services to test their resilience.
 
+## Installation
+
+You can install using following command
+
+```bash
+curl -sSL https://raw.githubusercontent.com/pgaijin66/mayhem/main/install.sh | bash
+# or
+
+wget -qO- https://raw.githubusercontent.com/pgaijin66/mayhem/main/install.sh | bash
+```
+
+
 ## Features
 
 - **HTTP Reverse Proxy**: Acts as a proxy between clients and your target service
