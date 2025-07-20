@@ -235,8 +235,15 @@ func main() {
 		timeoutDur  = flag.Duration("timeout-dur", 30*time.Second, "Timeout duration")
 		timeoutProb = flag.Float64("timeout-prob", 0.02, "Probability of timeout injection (0.0-1.0)")
 		configFile  = flag.String("config", "", "JSON configuration file path")
+		version     = flag.Bool("version", false, "Show version information")
 	)
 	flag.Parse()
+
+	// Handle version flag
+	if *version {
+		showVersion()
+		os.Exit(0)
+	}
 
 	if *target == "" {
 		fmt.Println("❌ Target service URL is required")
