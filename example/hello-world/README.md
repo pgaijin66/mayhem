@@ -94,14 +94,14 @@ $ ./mayhem \
 =======================================
 📡 Proxy listening on: http://localhost:8080
 🎯 Target service: http://localhost:9090
-⚡ Delay injection: 20.0% (100ms - 2000ms)
+⚡  Delay injection: 20.0% (100ms - 2000ms)
 💥 Error injection: 10.0% (codes: [500 502 503 504])
 ⏱️  Timeout injection: 5.0% (30s)
 
 Management endpoints:
 📊 Stats: http://localhost:8080/_chaos/stats
-⚙️  Config: http://localhost:8080/_chaos/config
-❤️  Health: http://localhost:8080/_chaos/health
+⚙️ Config: http://localhost:8080/_chaos/config
+❤️ Health: http://localhost:8080/_chaos/health
 
 Press Ctrl+C to stop
 2025/07/20 13:39:40 🚀 Starting chaos proxy on port 8080

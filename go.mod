@@ -1,4 +1,5 @@
-module mayhem
+module github.com/pgaijin66/mayhem
+
 
 go 1.24.1
 

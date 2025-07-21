@@ -1,0 +1,13 @@
+{
+  "delay_enabled": true,
+  "delay_min": "500ms",
+  "delay_max": "10s",
+  "delay_probability": 0.4,
+  "error_enabled": true,
+  "error_codes": [400, 401, 403, 404, 429, 500, 502, 503, 504, 507],
+  "error_probability": 0.25,
+  "error_message": "High chaos mode: Service intentionally degraded",
+  "timeout_enabled": true,
+  "timeout_duration": "45s",
+  "timeout_probability": 0.15
+}
