@@ -1,6 +1,26 @@
 # Mayhem - API Chaos Engineering Tool
 
-Mayhem is a powerful chaos engineering tool for APIs that allows you to inject controlled failures, delays, and timeouts into your HTTP services to test their resilience.
+![img](assets/img.png)
+
+🔥 API Chaos Engineering Tool 🔥
+
+Mayhem is a chaos engineering tool for APIs that allows you to inject controlled failures, delays, and timeouts into your HTTP services to test their resilience.
+
+## What is Chaos Engineering?
+
+Chaos engineering is the practice of intentionally introducing failures into your system to identify weaknesses before they cause outages in production. Mayhem makes this easy by providing a simple proxy that can inject delays, errors, and timeouts without modifying your application code.
+
+Think of it as a "vaccine for your API" - by exposing your system to small, controlled doses of failure, you build immunity against larger, unexpected outages.
+
+## Features
+
+Mayhem provides three main types of chaos injection:
+
+1. 🐌 Delay Injection: Introduces random delays to simulate network latency or slow dependencies
+
+2. 💥 Error Injection: Returns HTTP error codes to test error handling
+
+3. ⏱️ Timeout Injection: Simulates request timeouts to test timeout handling
 
 ## Installation
 
@@ -13,149 +33,249 @@ curl -sSL https://raw.githubusercontent.com/pgaijin66/mayhem/main/install.sh | b
 wget -qO- https://raw.githubusercontent.com/pgaijin66/mayhem/main/install.sh | bash
 ```
 
+## Basic Usage
 
-## Features
+To start Mayhem with default settings, you need to specify a target service:
 
-- **HTTP Reverse Proxy**: Acts as a proxy between clients and your target service
-- **Delay Injection**: Add configurable delays to simulate network latency
-- **Error Injection**: Return random HTTP error codes with custom messages
-- **Timeout Simulation**: Simulate request timeouts
-- **Real-time Statistics**: Monitor chaos injection statistics
-- **Dynamic Configuration**: Update chaos parameters on the fly via REST API
-- **CLI Configuration**: Flexible command-line options
-- **JSON Configuration**: Load configuration from JSON files
-
-## Quick Start
-
-### Build
-
-```bash
-make build
+```
+./mayhem -target=http://localhost:3000
 ```
 
-### Basic Usage
+What this does:
+- Starts Mayhem on port 8080
+- Proxies requests to your service running on port 3000
+- Injects delays 10% of the time
+- Injects errors 5% of the time
+- Injects timeouts 2% of the time
 
-```bash
-# Start chaos proxy pointing to your api 
-./mayhem -target=<YOUR_API_ENDPOINT> -port=8080
+## Custom Configuration
 
-# With custom chaos parameters
-./mayhem -target=<YOUR_API_ENDPOINT> -delay-prob=0.3 -error-prob=0.1 -port=8080
+You can customize the chaos behavior using command-line flags:
+
+```
+./mayhem \
+  -target=http://api.example.com \
+  -port=9000 \
+  -delay-prob=0.2 \
+  -delay-min=500ms \
+  -delay-max=3s \
+  -error-prob=0.1 \
+  -error-codes=500,503,504 \
+  -timeout-prob=0.05 \
+  -timeout-dur=10s
+```
+This configuration:
+
+1. Runs Mayhem on port 9000
+2. Targets api.example.com
+3. 20% delay probability (500ms to 3s delays)
+4. 10% error probability (returns 500, 503, or 504 errors)
+6. 5% timeout probability (10s timeouts)
+
+You can generate configuration file using `make config-example`
+
+## Configuration Options
+
+### JSON Configuration File
+You can also use a JSON configuration file for more complex setups. Create a file like `chaos-config.json`:
+
+```
+{
+  "delay_enabled": true,
+  "delay_min": "600ms",
+  "delay_max": "2s", 
+  "delay_probability": 0.2,
+  "error_enabled": true,
+  "error_codes": [500, 502, 503, 504],
+  "error_probability": 0.1,
+  "error_message": "Chaos engineering fault injection",
+  "timeout_enabled": true,
+  "timeout_duration": "30s",
+  "timeout_probability": 0.05
+}
 ```
 
-### Test the Chaos
+Then run Mayhem with the configuration file:
+
+```
+./mayhem -target=http://localhost:3000 -config=chaos-config.json
+```
+
+💡 Note: The JSON configuration will override any command-line flags you specify.
+
+### Management Endpoints
+
+Mayhem provides several management endpoints for monitoring and controlling chaos injection:
+
+```
+curl http://localhost:8080/_chaos/health
+```
+
+### Health Check
+
+Returns the current health status and target information:
+
+```
+{
+  "status": "healthy",
+  "chaos": "enabled", 
+  "timestamp": "2025-07-20T17:42:30Z",
+  "target": "http://localhost:3000"
+}
+```
+
+### Statistics
 
 ```bash
-# Make requests through the chaos proxy
-curl http://localhost:8080/get
-
-# Check statistics
 curl http://localhost:8080/_chaos/stats
+```
+
+Provides detailed statistics about chaos injection:
+
+```bash
+json{
+  "total_requests": 1000,
+  "delays_injected": 98,
+  "errors_injected": 52,
+  "delay_percentage": 9.8,
+  "error_percentage": 5.2,
+  "uptime": "2h15m30s",
+  "config": { ... }
+ }
+```
+
+### Configuration Management
+```
+# Get current configuration
+curl http://localhost:8080/_chaos/config
 
 # Update configuration
 curl -X POST http://localhost:8080/_chaos/config \
   -H "Content-Type: application/json" \
-  -d '{"delay_probability": 0.5, "error_probability": 0.2}'
+  -d '{"delay_probability": 0.3, "error_
 ```
 
-## Configuration Options
+💡 Note: You can dynamically update the chaos configuration without restarting Mayhem, making it easy to adjust chaos levels during testing.
 
-### Command Line Flags
+# Usage Examples
 
-- `-target`: Target service URL (required)
-- `-port`: Port to run the chaos proxy on (default: 8080)
-- `-delay-min`: Minimum delay duration (default: 100ms)
-- `-delay-max`: Maximum delay duration (default: 2s)
-- `-delay-prob`: Probability of delay injection 0.0-1.0 (default: 0.1)
-- `-error-prob`: Probability of error injection 0.0-1.0 (default: 0.05)
-- `-error-codes`: Comma-separated list of error codes (default: "500,502,503,504")
-- `-error-msg`: Error message for injected errors
-- `-timeout-dur`: Timeout duration (default: 30s)
-- `-timeout-prob`: Probability of timeout injection 0.0-1.0 (default: 0.02)
-- `-config`: JSON configuration file path
+## Testing API Resilience
 
-### Configuration File
-
-Create a `chaos-config.json` file:
+Start your API on port 3000 and Mayhem on port 8080:
 
 ```bash
-make config-example
+# Terminal 1: Start your API
+node server.js
+
+# Terminal 2: Start Mayhem
+./mayhem -target=http://localhost:3000 -delay-prob=0.3 -error-prob=0.1
+
+# Terminal 3: Send test requests through Mayhem
+curl http://localhost:8080/api/users
 ```
 
-Then run with:
+What happens: Your application will receive requests through Mayhem, which will randomly inject delays and errors based on the configured probabilities.
 
-```bash
-./mayhem -target=<YOUR_API_ENDPOINT> -config=chaos-config.json
+
+### Load Testing with Chaos
+
+Combine Mayhem with load testing tools to simulate real-world conditions:
+
+```
+# Start Mayhem with moderate chaos
+./mayhem -target=http://localhost:3000 -delay-prob=0.2 -error-prob=0.05
+
+# Run load test through Mayhem
+hey -n 1000 -c 10 http://localhost:8080/api/endpoint
+
 ```
 
-## Management Endpoints
+Result: This tests how your API performs under load while experiencing realistic network issues.
 
-- `GET /_chaos/stats` - View injection statistics
-- `GET /_chaos/config` - View current configuration
-- `POST /_chaos/config` - Update configuration
-- `GET /_chaos/health` - Health check
+### Gradual Chaos Increase
+You can gradually increase chaos levels during testing:
 
-## Docker Usage
+```
+# Start with low chaos
+./mayhem -target=http://localhost:3000 -delay-prob=0.1 -error-prob=0.02
 
-```bash
-# Build Docker image
-make docker
+# Increase error rate during testing
+curl -X POST http://localhost:8080/_chaos/config \
+  -H "Content-Type: application/json" \
+  -d '{"error_probability": 0.1}'
 
-# Run with Docker
-docker run -p 8080:8080 mayhem:latest -target=<YOUR_API_ENDPOINT>
+# Further increase chaos
+curl -X POST http://localhost:8080/_chaos/config \
+  -H "Content-Type: application/json" \
+  -d '{"delay_probability": 0.3, "error_probability": 0.2}'
 ```
 
-## Use Cases
 
-1. **API Resilience Testing**: Test how your applications handle API failures
-2. **Circuit Breaker Testing**: Verify circuit breaker patterns work correctly
-3. **Retry Logic Validation**: Ensure retry mechanisms handle failures properly
-4. **Timeout Handling**: Test application behavior under slow network conditions
-5. **Load Testing Enhancement**: Add realistic failure scenarios to load tests
+### Testing Specific Failure Scenarios
 
-## Examples
+Focus on specific types of failures:
 
-### Testing a Microservice
+```
+# Test timeout handling only
+./mayhem -target=http://localhost:3000 \
+  -delay-prob=0 \
+  -error-prob=0 \
+  -timeout-prob=0.5 \
+  -timeout-dur=5s
 
-```bash
-# Start your microservice
-# Start chaos proxy
-./mayhem -target=<YOUR_API_ENDPOINT> -port=8080 -delay-prob=0.2 -error-prob=0.1
+# Test specific error codes
+./mayhem -target=http://localhost:3000 \
+  -error-codes=503,504 \
+  -error-prob=0.3
+```
+### When using Mayhem 
 
-# Your tests now go through localhost:8080 instead of localhost:3000
+For chaos engineering, follow these best practices:
+
+- Start Small
+- Monitor Everything
+- Test in Stages
+- Use Realistic Values
+- Document Findings
+
+### FAQs
+
+#### Mayhem Won't Start
+
+1. Ensure the **target URL** is accessible.  
+2. Check that the **specified port** is available and not in use.  
+3. Confirm your **target service is running** before starting Mayhem.
+
+#### No Chaos Being Injected
+
+1. Verify that **probability values** are greater than `0`.  
+2. Check that **chaos injection is enabled** in your configuration.  
+3. Use the **statistics endpoint** to confirm requests are flowing through Mayhem.
+
+#### Too Much Chaos
+
+1. If your system is overwhelmed, **reduce the probability values**.  
+2. **Disable specific chaos types** (e.g., delay, error, timeout) through the configuration endpoint.
+
+### Debugging
+
+Use the management endpoints to debug issues:
+
+```
+# Check if requests are flowing through Mayhem
+curl http://localhost:8080/_chaos/stats
+
+# Verify configuration
+curl http://localhost:8080/_chaos/config
+
+# Confirm Mayhem is healthy
+curl http://localhost:8080/_chaos/health
 ```
 
-### CI/CD Integration
+Tip: The logs will also show when chaos is being injected, helping you understand the impact on your system.
 
-```bash
-# In your test script
-./mayhem -target=$SERVICE_URL -port=8080 -config=test-chaos.json &
-CHAOS_PID=$!
+### Integration with CI/CD
 
-# Run your tests against localhost:8080
-npm test
+Mayhem can be integrated into your continuous integration pipeline to automatically test resilience:
 
-# Cleanup
-kill $CHAOS_PID
-```
-
-## Building from Source
-
-```bash
-git clone <your-repo>
-cd mayhem
-make deps
-make build
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Add tests for new features
-4. Ensure all tests pass
-5. Submit a pull request
-
-## License
-
-MIT License - see LICENSE file for details.
+TODO

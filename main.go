@@ -18,19 +18,49 @@ import (
 	"time"
 )
 
+// Duration is a wrapper around time.Duration that can be marshaled/unmarshaled from JSON
+type Duration struct {
+	time.Duration
+}
+
+// UnmarshalJSON implements json.Unmarshaler interface
+func (d *Duration) UnmarshalJSON(b []byte) error {
+	var v interface{}
+	if err := json.Unmarshal(b, &v); err != nil {
+		return err
+	}
+
+	switch value := v.(type) {
+	case float64:
+		d.Duration = time.Duration(value)
+		return nil
+	case string:
+		var err error
+		d.Duration, err = time.ParseDuration(value)
+		return err
+	default:
+		return json.Unmarshal(b, &d.Duration)
+	}
+}
+
+// MarshalJSON implements json.Marshaler interface
+func (d Duration) MarshalJSON() ([]byte, error) {
+	return json.Marshal(d.Duration.String())
+}
+
 // ChaosConfig represents the configuration for chaos injection
 type ChaosConfig struct {
-	DelayEnabled       bool          `json:"delay_enabled"`
-	DelayMin           time.Duration `json:"delay_min"`
-	DelayMax           time.Duration `json:"delay_max"`
-	DelayProbability   float64       `json:"delay_probability"`
-	ErrorEnabled       bool          `json:"error_enabled"`
-	ErrorCodes         []int         `json:"error_codes"`
-	ErrorProbability   float64       `json:"error_probability"`
-	ErrorMessage       string        `json:"error_message"`
-	TimeoutEnabled     bool          `json:"timeout_enabled"`
-	TimeoutDuration    time.Duration `json:"timeout_duration"`
-	TimeoutProbability float64       `json:"timeout_probability"`
+	DelayEnabled       bool     `json:"delay_enabled"`
+	DelayMin           Duration `json:"delay_min"`
+	DelayMax           Duration `json:"delay_max"`
+	DelayProbability   float64  `json:"delay_probability"`
+	ErrorEnabled       bool     `json:"error_enabled"`
+	ErrorCodes         []int    `json:"error_codes"`
+	ErrorProbability   float64  `json:"error_probability"`
+	ErrorMessage       string   `json:"error_message"`
+	TimeoutEnabled     bool     `json:"timeout_enabled"`
+	TimeoutDuration    Duration `json:"timeout_duration"`
+	TimeoutProbability float64  `json:"timeout_probability"`
 }
 
 // ChaosMiddleware represents the chaos engineering middleware
@@ -114,7 +144,14 @@ func (cm *ChaosMiddleware) shouldApplyTimeout() bool {
 }
 
 func (cm *ChaosMiddleware) applyDelay() {
-	delay := cm.config.DelayMin + time.Duration(rand.Int63n(int64(cm.config.DelayMax-cm.config.DelayMin)))
+	// Access the underlying time.Duration from the Duration wrapper
+	minDelay := cm.config.DelayMin.Duration
+	maxDelay := cm.config.DelayMax.Duration
+
+	// Calculate random delay between min and max
+	delayRange := maxDelay - minDelay
+	delay := minDelay + time.Duration(rand.Int63n(int64(delayRange)))
+
 	cm.statsDelay++
 	log.Printf("💥 Injecting delay: %v", delay)
 	time.Sleep(delay)
@@ -144,7 +181,7 @@ func (cm *ChaosMiddleware) applyError(w http.ResponseWriter, r *http.Request) {
 func (cm *ChaosMiddleware) applyTimeout(w http.ResponseWriter, r *http.Request) {
 	log.Printf("💥 Injecting timeout: %v", cm.config.TimeoutDuration)
 
-	time.Sleep(cm.config.TimeoutDuration)
+	time.Sleep(cm.config.TimeoutDuration.Duration)
 
 	w.Header().Set("X-Chaos-Injected-Timeout", cm.config.TimeoutDuration.String())
 	w.WriteHeader(http.StatusGatewayTimeout)
@@ -264,32 +301,38 @@ func main() {
 		}
 	}
 
-	// Create default configuration
+	// Create default configuration using flag values
 	config := &ChaosConfig{
 		DelayEnabled:       true,
-		DelayMin:           *delayMin,
-		DelayMax:           *delayMax,
+		DelayMin:           Duration{*delayMin},
+		DelayMax:           Duration{*delayMax},
 		DelayProbability:   *delayProb,
 		ErrorEnabled:       true,
 		ErrorCodes:         codes,
 		ErrorProbability:   *errorProb,
 		ErrorMessage:       *errorMsg,
 		TimeoutEnabled:     true,
-		TimeoutDuration:    *timeoutDur,
+		TimeoutDuration:    Duration{*timeoutDur},
 		TimeoutProbability: *timeoutProb,
 	}
 
-	// Load configuration from file if provided
+	// Load configuration from file if provided (this will override flag values)
 	if *configFile != "" {
 		if data, err := os.ReadFile(*configFile); err == nil {
 			if err := json.Unmarshal(data, config); err != nil {
 				log.Printf("⚠️  Failed to parse config file: %v", err)
 			} else {
 				log.Printf("📄 Loaded configuration from %s", *configFile)
+				log.Printf("Config: DelayMin=%v, DelayMax=%v, TimeoutDuration=%v",
+					config.DelayMin.Duration, config.DelayMax.Duration, config.TimeoutDuration.Duration)
 			}
 		} else {
 			log.Printf("⚠️  Failed to read config file: %v", err)
 		}
+	} else {
+		log.Printf("🚀 Using command line configuration")
+		log.Printf("Config: DelayMin=%v, DelayMax=%v, TimeoutDuration=%v",
+			config.DelayMin.Duration, config.DelayMax.Duration, config.TimeoutDuration.Duration)
 	}
 
 	rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -318,18 +361,27 @@ func main() {
 
 	// Print startup information
 	fmt.Printf(`
-🔥 mayhem - API Chaos Engineering Tool
+
+	███╗   ███╗ █████╗ ██╗   ██╗██╗  ██╗███████╗███╗   ███╗
+	████╗ ████║██╔══██╗╚██╗ ██╔╝██║  ██║██╔════╝████╗ ████║
+	██╔████╔██║███████║ ╚████╔╝ ███████║█████╗  ██╔████╔██║
+	██║╚██╔╝██║██╔══██║  ╚██╔╝  ██╔══██║██╔══╝  ██║╚██╔╝██║
+	██║ ╚═╝ ██║██║  ██║   ██║   ██║  ██║███████╗██║ ╚═╝ ██║
+	╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝
+
+    🔥 API Chaos Engineering Tool 🔥
+
 =======================================
 📡 Proxy listening on: http://localhost:%s
 🎯 Target service: %s
-⚡ Delay injection: %.1f%% (%.0fms - %.0fms)
+⚡  Delay injection: %.1f%% (%.0fms - %.0fms)
 💥 Error injection: %.1f%% (codes: %v)
-⏱️  Timeout injection: %.1f%% (%v)
+⏱️ Timeout injection: %.1f%% (%v)
 
 Management endpoints:
 📊 Stats: http://localhost:%s/_chaos/stats
-⚙️  Config: http://localhost:%s/_chaos/config
-❤️  Health: http://localhost:%s/_chaos/health
+⚙️ Config: http://localhost:%s/_chaos/config
+❤️ Health: http://localhost:%s/_chaos/health
 
 Press Ctrl+C to stop
 `, *port, *target,
