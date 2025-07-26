@@ -27,10 +27,10 @@ Mayhem provides three main types of chaos injection:
 You can install using following command
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/pgaijin66/mayhem/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/pgaijin66/mayhem/main/scripts/install.sh | bash
 # or
 
-wget -qO- https://raw.githubusercontent.com/pgaijin66/mayhem/main/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/pgaijin66/mayhem/main/scripts/install.sh | bash
 ```
 
 ## Basic Usage
