@@ -11,10 +11,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/pgaijin66/mayhem/internal/chaos"
-	"github.com/pgaijin66/mayhem/internal/server"
-	"github.com/pgaijin66/mayhem/pkg/usage"
-	"github.com/pgaijin66/mayhem/pkg/version"
+	"github.com/pgaijin66/phailure/internal/chaos"
+	"github.com/pgaijin66/phailure/internal/server"
+	"github.com/pgaijin66/phailure/pkg/usage"
+	"github.com/pgaijin66/phailure/pkg/version"
 )
 
 func main() {

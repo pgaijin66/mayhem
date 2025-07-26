@@ -2,7 +2,7 @@
 
 - [Start your API](#start-your-api)
 - [Test Normal API Functionality](#test-normal-api-functionality)
-- [Start mayhem Proxy](#start-mayhem-proxy)
+- [Start phailure Proxy](#start-phailure-proxy)
 - [Test API Through Chaos Proxy](#test-api-through-chaos-proxy)
 - [Run Multiple Tests to Observe Chaos Effects](#run-multiple-tests-to-observe-chaos-effects)
 - [Test All Endpoints Through Chaos](#test-all-endpoints-through-chaos)
@@ -60,13 +60,13 @@ curl -X POST http://localhost:9090/users \
 curl -v http://localhost:9090/hello
 ```
 
-### Start mayhem Proxy
+### Start phailure Proxy
 
-Open a new terminal and start mayhem pointing to your Gin API:
+Open a new terminal and start phailure pointing to your Gin API:
 
 ```bash
 # Terminal 3
-./mayhem \
+./phailure \
   --target http://localhost:9090 \
   --port 8080 \
   --delay-prob 0.2 \
@@ -81,7 +81,7 @@ You should see startup output like:
 
 ```bash
 # Terminal 3
-$ ./mayhem \
+$ ./phailure \
   --target http://localhost:9090 \
   --port 8080 \
   --delay-prob 0.2 \
@@ -90,7 +90,7 @@ $ ./mayhem \
   --delay-min 100ms \
   --delay-max 2s
 
-🔥 mayhem - API Chaos Engineering Tool
+🔥 phailure - API Chaos Engineering Tool
 =======================================
 📡 Proxy listening on: http://localhost:8080
 🎯 Target service: http://localhost:9090
@@ -163,7 +163,7 @@ curl -w "Response Time: %{time_total}s | DNS: %{time_namelookup}s | Connect: %{t
 
 ### Monitor Chaos Statistics
 
-mayhem provides management endpoints to monitor what's happening:
+phailure provides management endpoints to monitor what's happening:
 
 ```bash
 # Check chaos statistics
@@ -518,7 +518,7 @@ curl -X POST http://localhost:8080/_chaos/config \
 echo "Final chaos proxy statistics:"
 curl -s http://localhost:8080/_chaos/stats | python3 -m json.tool
 
-# Stop mayhem (Ctrl+C in the terminal running it)
+# Stop phailure (Ctrl+C in the terminal running it)
 # Stop your Gin API (Ctrl+C in the terminal running it)
 ```
 
@@ -528,8 +528,8 @@ curl -s http://localhost:8080/_chaos/stats | python3 -m json.tool
 # Start your API
 go run main.go
 
-# Start mayhem with moderate chaos
-./mayhem --target http://localhost:9090 --port 8080 --delay-prob 0.2 --error-prob 0.1
+# Start phailure with moderate chaos
+./phailure --target http://localhost:9090 --port 8080 --delay-prob 0.2 --error-prob 0.1
 
 # Test normal endpoint
 curl http://localhost:9090/hello

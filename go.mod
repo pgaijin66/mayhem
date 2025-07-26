@@ -1,4 +1,4 @@
-module github.com/pgaijin66/mayhem
+module github.com/pgaijin66/phailure
 
 
 go 1.24.1

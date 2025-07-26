@@ -15,7 +15,7 @@ var (
 
 // showVersion prints version information
 func showVersion() {
-	fmt.Printf(`mayhem %s
+	fmt.Printf(`phailure %s
 Git Commit: %s
 Build Date: %s
 Go Version: %s

@@ -1,20 +1,20 @@
-# Mayhem - API Chaos Engineering Tool
+# Phailure - API Chaos Engineering Tool
 
 ![img](assets/img.png)
 
 🔥 API Chaos Engineering Tool 🔥
 
-Mayhem is a chaos engineering tool for APIs that allows you to inject controlled failures, delays, and timeouts into your HTTP services to test their resilience.
+Phailure is a chaos engineering tool for APIs that allows you to inject controlled failures, delays, and timeouts into your HTTP services to test their resilience.
 
 ## What is Chaos Engineering?
 
-Chaos engineering is the practice of intentionally introducing failures into your system to identify weaknesses before they cause outages in production. Mayhem makes this easy by providing a simple proxy that can inject delays, errors, and timeouts without modifying your application code.
+Chaos engineering is the practice of intentionally introducing failures into your system to identify weaknesses before they cause outages in production. phailure makes this easy by providing a simple proxy that can inject delays, errors, and timeouts without modifying your application code.
 
 Think of it as a "vaccine for your API" - by exposing your system to small, controlled doses of failure, you build immunity against larger, unexpected outages.
 
 ## Features
 
-Mayhem provides three main types of chaos injection:
+phailure provides three main types of chaos injection:
 
 1. 🐌 Delay Injection: Introduces random delays to simulate network latency or slow dependencies
 
@@ -27,22 +27,22 @@ Mayhem provides three main types of chaos injection:
 You can install using following command
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/pgaijin66/mayhem/main/scripts/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/pgaijin66/phailure/main/scripts/install.sh | bash
 # or
 
-wget -qO- https://raw.githubusercontent.com/pgaijin66/mayhem/main/scripts/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/pgaijin66/phailure/main/scripts/install.sh | bash
 ```
 
 ## Basic Usage
 
-To start Mayhem with default settings, you need to specify a target service:
+To start phailure with default settings, you need to specify a target service:
 
 ```
-./mayhem -target=http://localhost:3000
+./phailure -target=http://localhost:3000
 ```
 
 What this does:
-- Starts Mayhem on port 8080
+- Starts phailure on port 8080
 - Proxies requests to your service running on port 3000
 - Injects delays 10% of the time
 - Injects errors 5% of the time
@@ -53,7 +53,7 @@ What this does:
 You can customize the chaos behavior using command-line flags:
 
 ```
-./mayhem \
+./phailure \
   -target=http://api.example.com \
   -port=9000 \
   -delay-prob=0.2 \
@@ -66,7 +66,7 @@ You can customize the chaos behavior using command-line flags:
 ```
 This configuration:
 
-1. Runs Mayhem on port 9000
+1. Runs phailure on port 9000
 2. Targets api.example.com
 3. 20% delay probability (500ms to 3s delays)
 4. 10% error probability (returns 500, 503, or 504 errors)
@@ -95,17 +95,17 @@ You can also use a JSON configuration file for more complex setups. Create a fil
 }
 ```
 
-Then run Mayhem with the configuration file:
+Then run phailure with the configuration file:
 
 ```
-./mayhem -target=http://localhost:3000 -config=chaos-config.json
+./phailure -target=http://localhost:3000 -config=chaos-config.json
 ```
 
 💡 Note: The JSON configuration will override any command-line flags you specify.
 
 ### Management Endpoints
 
-Mayhem provides several management endpoints for monitoring and controlling chaos injection:
+phailure provides several management endpoints for monitoring and controlling chaos injection:
 
 ```
 curl http://localhost:8080/_chaos/health
@@ -155,37 +155,37 @@ curl -X POST http://localhost:8080/_chaos/config \
   -d '{"delay_probability": 0.3, "error_
 ```
 
-💡 Note: You can dynamically update the chaos configuration without restarting Mayhem, making it easy to adjust chaos levels during testing.
+💡 Note: You can dynamically update the chaos configuration without restarting phailure, making it easy to adjust chaos levels during testing.
 
 # Usage Examples
 
 ## Testing API Resilience
 
-Start your API on port 3000 and Mayhem on port 8080:
+Start your API on port 3000 and phailure on port 8080:
 
 ```bash
 # Terminal 1: Start your API
 node server.js
 
-# Terminal 2: Start Mayhem
-./mayhem -target=http://localhost:3000 -delay-prob=0.3 -error-prob=0.1
+# Terminal 2: Start phailure
+./phailure -target=http://localhost:3000 -delay-prob=0.3 -error-prob=0.1
 
-# Terminal 3: Send test requests through Mayhem
+# Terminal 3: Send test requests through phailure
 curl http://localhost:8080/api/users
 ```
 
-What happens: Your application will receive requests through Mayhem, which will randomly inject delays and errors based on the configured probabilities.
+What happens: Your application will receive requests through phailure, which will randomly inject delays and errors based on the configured probabilities.
 
 
 ### Load Testing with Chaos
 
-Combine Mayhem with load testing tools to simulate real-world conditions:
+Combine phailure with load testing tools to simulate real-world conditions:
 
 ```
-# Start Mayhem with moderate chaos
-./mayhem -target=http://localhost:3000 -delay-prob=0.2 -error-prob=0.05
+# Start phailure with moderate chaos
+./phailure -target=http://localhost:3000 -delay-prob=0.2 -error-prob=0.05
 
-# Run load test through Mayhem
+# Run load test through phailure
 hey -n 1000 -c 10 http://localhost:8080/api/endpoint
 
 ```
@@ -197,7 +197,7 @@ You can gradually increase chaos levels during testing:
 
 ```
 # Start with low chaos
-./mayhem -target=http://localhost:3000 -delay-prob=0.1 -error-prob=0.02
+./phailure -target=http://localhost:3000 -delay-prob=0.1 -error-prob=0.02
 
 # Increase error rate during testing
 curl -X POST http://localhost:8080/_chaos/config \
@@ -217,18 +217,18 @@ Focus on specific types of failures:
 
 ```
 # Test timeout handling only
-./mayhem -target=http://localhost:3000 \
+./phailure -target=http://localhost:3000 \
   -delay-prob=0 \
   -error-prob=0 \
   -timeout-prob=0.5 \
   -timeout-dur=5s
 
 # Test specific error codes
-./mayhem -target=http://localhost:3000 \
+./phailure -target=http://localhost:3000 \
   -error-codes=503,504 \
   -error-prob=0.3
 ```
-### When using Mayhem 
+### When using phailure 
 
 For chaos engineering, follow these best practices:
 
@@ -240,17 +240,17 @@ For chaos engineering, follow these best practices:
 
 ### FAQs
 
-#### Mayhem Won't Start
+#### phailure Won't Start
 
 1. Ensure the **target URL** is accessible.  
 2. Check that the **specified port** is available and not in use.  
-3. Confirm your **target service is running** before starting Mayhem.
+3. Confirm your **target service is running** before starting phailure.
 
 #### No Chaos Being Injected
 
 1. Verify that **probability values** are greater than `0`.  
 2. Check that **chaos injection is enabled** in your configuration.  
-3. Use the **statistics endpoint** to confirm requests are flowing through Mayhem.
+3. Use the **statistics endpoint** to confirm requests are flowing through phailure.
 
 #### Too Much Chaos
 
@@ -262,13 +262,13 @@ For chaos engineering, follow these best practices:
 Use the management endpoints to debug issues:
 
 ```
-# Check if requests are flowing through Mayhem
+# Check if requests are flowing through phailure
 curl http://localhost:8080/_chaos/stats
 
 # Verify configuration
 curl http://localhost:8080/_chaos/config
 
-# Confirm Mayhem is healthy
+# Confirm phailure is healthy
 curl http://localhost:8080/_chaos/health
 ```
 
@@ -276,6 +276,6 @@ Tip: The logs will also show when chaos is being injected, helping you understan
 
 ### Integration with CI/CD
 
-Mayhem can be integrated into your continuous integration pipeline to automatically test resilience:
+phailure can be integrated into your continuous integration pipeline to automatically test resilience:
 
 TODO

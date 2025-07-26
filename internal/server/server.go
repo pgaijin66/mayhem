@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/pgaijin66/mayhem/internal/chaos"
+	"github.com/pgaijin66/phailure/internal/chaos"
 )
 
 // Server represents the HTTP server

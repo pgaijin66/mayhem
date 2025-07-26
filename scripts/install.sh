@@ -8,8 +8,8 @@ cleanup() {
     if [ $exit_code -ne 0 ]; then
         echo "❌ Installation failed with exit code $exit_code"
         # Clean up any temporary files
-        [ -f "mayhem" ] && rm -f mayhem
-        [ -f "/tmp/mayhem.tar.gz" ] && rm -f /tmp/mayhem.tar.gz
+        [ -f "phailure" ] && rm -f phailure
+        [ -f "/tmp/phailure.tar.gz" ] && rm -f /tmp/phailure.tar.gz
     fi
     exit $exit_code
 }
@@ -40,6 +40,32 @@ download_file() {
         echo "❌ Neither curl nor wget found. Please install one of them."
         return 1
     fi
+}
+
+get_latest_version() {
+    echo "🔍 Fetching latest version..."
+    
+    local latest_version=""
+    
+    if command_exists curl; then
+        echo "📡 Using curl to fetch latest release..."
+        latest_version=$(curl -fsSL https://api.github.com/repos/pgaijin66/phailure/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    elif command_exists wget; then
+        echo "📡 Using wget to fetch latest release..."
+        latest_version=$(wget -qO- https://api.github.com/repos/pgaijin66/phailure/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    else
+        echo "❌ Neither curl nor wget found. Please install one of them."
+        return 1
+    fi
+    
+    if [ -z "$latest_version" ]; then
+        echo "❌ Failed to fetch latest version from GitHub API"
+        echo "ℹ️  Falling back to hardcoded version v3.0.0"
+        latest_version="v3.0.0"
+    fi
+    
+    echo "✅ Latest version: $latest_version"
+    echo "$latest_version"
 }
 
 echo "🔍 Detecting platform..."
@@ -77,6 +103,13 @@ esac
 
 echo "✅ Platform detected: ${PLATFORM}/${ARCH}"
 
+# Get latest version from GitHub API
+LATEST_VERSION=$(get_latest_version)
+if [ $? -ne 0 ]; then
+    echo "❌ Failed to get latest version"
+    exit 1
+fi
+
 echo "🔍 Checking prerequisites..."
 
 if ! command_exists tar; then
@@ -109,15 +142,15 @@ if ! sudo -n true 2>/dev/null; then
     fi
 fi
 
-BINARY="mayhem-v1.0.0-${PLATFORM}-${ARCH}"
-URL="https://github.com/pgaijin66/mayhem/releases/download/v2.0.0/${BINARY}.tar.gz"
-TEMP_FILE="/tmp/mayhem.tar.gz"
+BINARY="phailure-${LATEST_VERSION}-${PLATFORM}-${ARCH}"
+URL="https://github.com/pgaijin66/phailure/releases/download/${LATEST_VERSION}/${BINARY}.tar.gz"
+TEMP_FILE="/tmp/phailure.tar.gz"
 
-echo "🔥 Installing Mayhem for ${PLATFORM}/${ARCH}..."
+echo "🔥 Installing phailure ${LATEST_VERSION} for ${PLATFORM}/${ARCH}..."
 echo "📥 Downloading from: $URL"
 
 if ! download_file "$URL" "$TEMP_FILE"; then
-    echo "❌ Failed to download Mayhem binary"
+    echo "❌ Failed to download phailure binary"
     exit 1
 fi
 
@@ -139,49 +172,49 @@ if ! tar -xzf "$TEMP_FILE" -C "$(pwd)"; then
     exit 1
 fi
 
-if [ ! -f "mayhem" ]; then
-    echo "❌ Mayhem binary not found after extraction"
+if [ ! -f "phailure" ]; then
+    echo "❌ phailure binary not found after extraction"
     echo "ℹ️  Archive contents:"
     tar -tzf "$TEMP_FILE" 2>/dev/null || echo "Could not list archive contents"
     exit 1
 fi
 
-if [ ! -x "mayhem" ]; then
+if [ ! -x "phailure" ]; then
     echo "🔧 Making binary executable..."
-    if ! chmod +x mayhem; then
+    if ! chmod +x phailure; then
         echo "❌ Failed to make binary executable"
         exit 1
     fi
 fi
 
 echo "🧪 Testing binary..."
-if ! ./mayhem -version >/dev/null 2>&1; then
+if ! ./phailure -version >/dev/null 2>&1; then
     echo "⚠️  Binary test failed, but proceeding with installation..."
     echo "ℹ️  The binary might need to be in PATH to work correctly"
 fi
 
 echo "🚀 Installing to /usr/local/bin..."
-if ! sudo mv mayhem /usr/local/bin/; then
+if ! sudo mv phailure /usr/local/bin/; then
     echo "❌ Failed to install binary to /usr/local/bin"
     exit 1
 fi
 
-if [ ! -f "/usr/local/bin/mayhem" ]; then
+if [ ! -f "/usr/local/bin/phailure" ]; then
     echo "❌ Installation verification failed"
     exit 1
 fi
 
-if [ ! -x "/usr/local/bin/mayhem" ]; then
+if [ ! -x "/usr/local/bin/phailure" ]; then
     echo "❌ Installed binary is not executable"
     exit 1
 fi
 
 rm -f "$TEMP_FILE"
 
-echo "✅ Mayhem installed successfully!"
+echo "✅ phailure ${LATEST_VERSION} installed successfully!"
 
 echo "🧪 Testing installation..."
-if mayhem -version; then
+if phailure -version; then
     echo "🎉 Installation completed and verified!"
 else
     echo "⚠️  Installation completed but version check failed"

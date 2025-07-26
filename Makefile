@@ -1,9 +1,9 @@
-# Makefile for mayhem
+# Makefile for phailure
 .PHONY: build run clean test podman
 
 # Build variables
-APP_NAME := mayhem
-BINARY_NAME := mayhem
+APP_NAME := phailure
+BINARY_NAME := phailure
 MAIN_PACKAGE := ./main.go
 
 # Version information
@@ -53,13 +53,13 @@ build-all: clean
 	@echo "Building $(APP_NAME) $(VERSION) for all platforms..."
 	@mkdir -p dist
 	# Linux
-	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o dist/$(APP_NAME)-linux-amd64 .
-	GOOS=linux GOARCH=arm64 go build $(LDFLAGS) -o dist/$(APP_NAME)-linux-arm64 .
+	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o dist/$(APP_NAME)-linux-amd64 cmd/proxy/main.go
+	GOOS=linux GOARCH=arm64 go build $(LDFLAGS) -o dist/$(APP_NAME)-linux-arm64 cmd/proxy/main.go
 	# macOS
-	GOOS=darwin GOARCH=amd64 go build $(LDFLAGS) -o dist/$(APP_NAME)-darwin-amd64 .
-	GOOS=darwin GOARCH=arm64 go build $(LDFLAGS) -o dist/$(APP_NAME)-darwin-arm64 .
+	GOOS=darwin GOARCH=amd64 go build $(LDFLAGS) -o dist/$(APP_NAME)-darwin-amd64 cmd/proxy/main.go
+	GOOS=darwin GOARCH=arm64 go build $(LDFLAGS) -o dist/$(APP_NAME)-darwin-arm64 cmd/proxy/main.go
 	# Windows
-	GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o dist/$(APP_NAME)-windows-amd64.exe .
+	GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o dist/$(APP_NAME)-windows-amd64.exe cmd/proxy/main.go
 	@echo "✅ Binaries built in dist/ for version $(VERSION)"
 
 # Create release archives
@@ -101,8 +101,8 @@ tag:
 release: test checksums
 	@echo "🚀 Creating GitHub release $(VERSION)..."
 	gh release create $(VERSION) releases/* \
-		--title "Mayhem $(VERSION)" \
-		--notes "Release $(VERSION) of Mayhem API Chaos Engineering Tool" \
+		--title "phailure $(VERSION)" \
+		--notes "Release $(VERSION) of phailure API Chaos Engineering Tool" \
 		--latest
 	@echo "✅ GitHub release $(VERSION) created"
 
@@ -128,7 +128,7 @@ test:
 
 # Run with example configuration
 run-example: build
-	@echo "🚀 Starting mayhem $(VERSION) with example configuration..."
+	@echo "🚀 Starting phailure $(VERSION) with example configuration..."
 	./bin/$(BINARY_NAME) -target=http://httpbin.org -port=8080 -delay-prob=0.3 -error-prob=0.1
 
 # ==================================================================================== #
@@ -214,12 +214,12 @@ podman:
 
 # Run with Docker
 docker-run: docker
-	@echo "🐳 Running mayhem $(VERSION) in Docker..."
+	@echo "🐳 Running phailure $(VERSION) in Docker..."
 	docker run -p 8080:8080 $(APP_NAME):$(VERSION) -target=http://httpbin.org
 
 # Run with Podman
 podman-run: podman
-	@echo "🐳 Running mayhem $(VERSION) in Podman..."
+	@echo "🐳 Running phailure $(VERSION) in Podman..."
 	podman run -p 8080:8080 $(APP_NAME):$(VERSION) -target=http://httpbin.org
 
 # ==================================================================================== #
@@ -228,7 +228,7 @@ podman-run: podman
 
 # Help
 help:
-	@echo "🔥 Mayhem $(VERSION) - API Chaos Engineering Tool"
+	@echo "🔥 phailure $(VERSION) - API Chaos Engineering Tool"
 	@echo ""
 	@echo "📋 Available targets:"
 	@echo ""
