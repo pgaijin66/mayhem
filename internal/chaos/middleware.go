@@ -28,7 +28,6 @@ type ChaosMiddleware struct {
 func NewChaosMiddleware(config *ChaosConfig, targetURL *url.URL) *ChaosMiddleware {
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 
-	// Customize the proxy to handle chaos injection
 	originalDirector := proxy.Director
 	proxy.Director = func(req *http.Request) {
 		originalDirector(req)
@@ -47,13 +46,11 @@ func NewChaosMiddleware(config *ChaosConfig, targetURL *url.URL) *ChaosMiddlewar
 func (cm *ChaosMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	cm.statsTotal++
 
-	// Skip chaos for management endpoints
 	if strings.HasPrefix(r.URL.Path, "/_chaos") {
 		cm.handleManagement(w, r)
 		return
 	}
 
-	// Apply chaos effects
 	if cm.shouldApplyChaos() {
 		if cm.config.TimeoutEnabled && cm.shouldApplyTimeout() {
 			cm.applyTimeout(w, r)
@@ -70,16 +67,14 @@ func (cm *ChaosMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Add chaos headers
 	w.Header().Set("X-Chaos-Applied", "true")
 	w.Header().Set("X-Chaos-Timestamp", time.Now().Format(time.RFC3339))
 
-	// Forward to target service
 	cm.proxy.ServeHTTP(w, r)
 }
 
 func (cm *ChaosMiddleware) shouldApplyChaos() bool {
-	return true // Always consider chaos, individual methods check probabilities
+	return true
 }
 
 func (cm *ChaosMiddleware) shouldApplyDelay() bool {
@@ -95,11 +90,9 @@ func (cm *ChaosMiddleware) shouldApplyTimeout() bool {
 }
 
 func (cm *ChaosMiddleware) applyDelay() {
-	// Access the underlying time.Duration from the Duration wrapper
 	minDelay := cm.config.DelayMin.Duration
 	maxDelay := cm.config.DelayMax.Duration
 
-	// Calculate random delay between min and max
 	delayRange := maxDelay - minDelay
 	delay := minDelay + time.Duration(rand.Int63n(int64(delayRange)))
 

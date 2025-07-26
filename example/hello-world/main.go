@@ -14,7 +14,6 @@ func main() {
 	router := gin.New()
 	router.GET("/hello", hello)
 
-	// Add a few more endpoints to test
 	router.GET("/users", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"users": []gin.H{

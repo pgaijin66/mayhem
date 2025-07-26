@@ -45,7 +45,7 @@ vulncheck:
 # Build for current platform
 build:
 	@echo "Building $(APP_NAME) $(VERSION)..."
-	go build $(LDFLAGS) -o bin/$(APP_NAME) .
+	go build $(LDFLAGS) -o bin/$(APP_NAME) cmd/proxy/main.go
 	@echo "✅ Built: bin/$(APP_NAME)"
 
 # Build for all platforms

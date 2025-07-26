@@ -23,7 +23,6 @@ type Server struct {
 
 // New creates a new server instance
 func New(port string, config *chaos.ChaosConfig, targetURL *url.URL) *Server {
-	// Initialize random seed
 	rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	chaosMiddleware := chaos.NewChaosMiddleware(config, targetURL)

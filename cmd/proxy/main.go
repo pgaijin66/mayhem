@@ -13,10 +13,12 @@ import (
 
 	"github.com/pgaijin66/mayhem/internal/chaos"
 	"github.com/pgaijin66/mayhem/internal/server"
+	"github.com/pgaijin66/mayhem/pkg/usage"
 	"github.com/pgaijin66/mayhem/pkg/version"
 )
 
 func main() {
+	flag.Usage = usage.CustomUsage
 	var (
 		port        = flag.String("port", "8080", "Port to run the chaos proxy on")
 		target      = flag.String("target", "", "Target service URL (required)")
@@ -33,7 +35,6 @@ func main() {
 	)
 	flag.Parse()
 
-	// Handle version flag
 	if *showVersion {
 		version.Print()
 		os.Exit(0)
@@ -50,13 +51,11 @@ func main() {
 		log.Fatalf("❌ Invalid target URL: %v", err)
 	}
 
-	// Create configuration from flags
 	config, err := chaos.NewConfigFromFlags(*delayMin, *delayMax, *delayProb, *errorProb, *errorCodes, *errorMsg, *timeoutDur, *timeoutProb)
 	if err != nil {
 		log.Fatalf("❌ Invalid configuration: %v", err)
 	}
 
-	// Load config file if provided
 	if *configFile != "" {
 		if err := config.LoadFromFile(*configFile); err != nil {
 			log.Printf("⚠️  Failed to load config file: %v", err)
@@ -71,10 +70,8 @@ func main() {
 			config.DelayMin.Duration, config.DelayMax.Duration, config.TimeoutDuration.Duration)
 	}
 
-	// Create and start server
 	srv := server.New(*port, config, targetURL)
 
-	// Setup graceful shutdown
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 

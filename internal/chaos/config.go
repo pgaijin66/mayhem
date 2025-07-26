@@ -27,7 +27,6 @@ type ChaosConfig struct {
 func NewConfigFromFlags(delayMin, delayMax time.Duration, delayProb, errorProb float64,
 	errorCodes, errorMsg string, timeoutDur time.Duration, timeoutProb float64) (*ChaosConfig, error) {
 
-	// Parse error codes
 	var codes []int
 	for _, code := range strings.Split(errorCodes, ",") {
 		if c, err := strconv.Atoi(strings.TrimSpace(code)); err == nil {
