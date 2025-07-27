@@ -22,6 +22,17 @@ phailure provides three main types of chaos injection:
 
 3. ⏱️ Timeout Injection: Simulates request timeouts to test timeout handling
 
+## Why Use Phailure?
+
+- **Test Before It Breaks:** Catch potential failure points *before* they hit production.
+- **No Code Changes Needed:** Just run it as a reverse proxy. No need to modify your application.
+- **Simulate Real-World Failures:** Recreate scenarios like latency, server errors, and timeouts.
+- **Improve Reliability:** Build systems that gracefully handle failure, leading to more resilient APIs.
+- **Lightweight & Flexible:** Configure via flags or JSON. Observe and adjust chaos in real-time.
+- **Great for Dev, Staging, and CI:** Safely test your systems under stress without affecting production.
+
+> If you're serious about uptime and reliability, **Phailure** gives you a safe playground to break and harden your system.
+
 ## Installation
 
 You can install using following command
@@ -161,7 +172,7 @@ curl -X POST http://localhost:8080/_chaos/config \
 
 ## Testing API Resilience
 
-Start your API on port 3000 and phailure on port 8080:
+You can develop and run API in any language. Start your API on port 3000 and phailure on port 8080:
 
 ```bash
 # Terminal 1: Start your API
