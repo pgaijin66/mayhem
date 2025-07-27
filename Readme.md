@@ -283,10 +283,18 @@ curl http://localhost:8080/_chaos/config
 curl http://localhost:8080/_chaos/health
 ```
 
-Tip: The logs will also show when chaos is being injected, helping you understand the impact on your system.
+> Tip: The logs will also show when chaos is being injected, helping you understand the impact on your system.
 
 ### Integration with CI/CD
 
 phailure can be integrated into your continuous integration pipeline to automatically test resilience:
 
 TODO
+
+## ⚠️ Disclaimer
+
+**Phailure** is a Work in Progress (WIP) project and is under active development.  
+It may contain bugs or incomplete features.
+
+Contributions, suggestions, and feedback are welcome as the project evolves!
+
