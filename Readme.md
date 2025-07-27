@@ -31,7 +31,7 @@ phailure provides three main types of chaos injection:
 - **Lightweight & Flexible:** Configure via flags or JSON. Observe and adjust chaos in real-time.
 - **Great for Dev, Staging, and CI:** Safely test your systems under stress without affecting production.
 
-> If you're serious about uptime and reliability, **Phailure** gives you a safe playground to break and harden your system.
+> If you're serious about uptime and reliability, **Phailure** gives you a safer resiliency testing playground to break and harden your microservice.
 
 ## Installation
 
