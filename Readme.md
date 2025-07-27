@@ -1,4 +1,4 @@
-# Phailure - API Chaos Engineering Tool
+# Phailure
 
 ![img](assets/img.png)
 
